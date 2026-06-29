@@ -1,0 +1,13 @@
+langchain
+langchain-core
+langchain-community
+langchain-mistralai
+langgraph
+mistralai
+python-dotenv
+pydantic-settings
+fastapi
+uvicorn
+psycopg[binary]
+python-multipart
+httpx

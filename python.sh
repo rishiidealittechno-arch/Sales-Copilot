@@ -2,70 +2,32 @@
 
 set -e
 
-echo "🚀 Setting up AI Project Environment..."
+echo "🚀 Setting up AI Python environment..."
 
-# Create server directory
-mkdir -p python
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_DIR="$ROOT_DIR/python"
 
-# Move into python directory
-cd python
+mkdir -p "$PYTHON_DIR"
+cd "$PYTHON_DIR"
 
-# Create virtual environment
-python3 -m venv venv
+if [ ! -d "venv" ]; then
+  python3 -m venv venv
+fi
 
-# Activate venv
 source venv/bin/activate
 
-# Upgrade pip
 pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
 
-echo "📦 Installing AI packages..."
+if [ ! -f ".env" ]; then
+  cp .env.example .env
+  echo "Created python/.env from .env.example"
+fi
 
-pip install \
-langchain \
-langchain-core \
-langchain-community \
-langchain-openai \
-langchain-mistralai \
-langchain-pinecone \
-pinecone \
-mistralai \
-python-dotenv \
-fastapi \
-uvicorn \
-pypdf \
-pymupdf \
-unstructured \
-tiktoken \
-python-multipart \
-aiofiles \
-psycopg[binary]
-
-# Create starter FastAPI app
-cat > main.py << 'EOF'
-from fastapi import FastAPI
-
-app = FastAPI(title="AI Backend")
-
-@app.get("/")
-async def root():
-    return {"message": "AI Python Running"}
-EOF
-
-# Create .env file
-touch .env
-
-echo "✅ Installation Complete"
-echo ""
-echo "Project Structure:"
-echo "python/"
-echo "├── venv/"
-echo "├── main.py"
-echo "└── .env"
+echo "✅ Installation complete"
 echo ""
 echo "Activate environment:"
-echo "cd python"
-echo "source venv/bin/activate"
+echo "cd python && source venv/bin/activate"
 echo ""
 echo "Run FastAPI:"
-echo "uvicorn main:app --reload"
+echo "uvicorn main:app --reload --port 8000"
