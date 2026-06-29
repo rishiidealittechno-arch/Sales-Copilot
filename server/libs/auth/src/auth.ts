@@ -54,6 +54,9 @@ export const auth = betterAuth({
     process.env.CLIENT_URL ?? 'http://localhost:5173',
     'http://localhost:5173',
   ],
+  onAPIError: {
+    errorURL: `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/login`,
+  },
   plugins: [
     lastLoginMethod(),
     organization({
