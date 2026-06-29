@@ -143,6 +143,46 @@ def to_langchain_messages(messages: list[ChatMessage]):
     return converted
 
 
+def extract_chunk_text(chunk) -> str:
+    content = getattr(chunk, "content", None)
+    if not content:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict) and part.get("type") == "text":
+                parts.append(part.get("text", ""))
+        return "".join(parts)
+    return ""
+
+
+def format_tool_status(tool_name: str) -> str:
+    labels = {
+        "list_accounts": "Listing accounts...",
+        "list_accounts_without_industry": "Finding accounts without industry...",
+        "get_crm_summary": "Fetching CRM summary...",
+        "create_account": "Creating account...",
+        "update_account": "Updating account...",
+        "list_contacts": "Listing contacts...",
+        "create_contact": "Creating contact...",
+        "update_contact": "Updating contact...",
+        "list_opportunities": "Listing opportunities...",
+        "create_opportunity": "Creating opportunity...",
+        "update_opportunity": "Updating opportunity...",
+        "list_deals": "Listing deals...",
+        "create_deal": "Creating deal...",
+        "update_deal": "Updating deal...",
+        "list_tasks": "Listing tasks...",
+        "create_task": "Creating task...",
+        "update_task": "Updating task...",
+    }
+    return labels.get(tool_name, f"Running {tool_name.replace('_', ' ')}...")
+
+
 def extract_assistant_text(messages) -> str:
     for message in reversed(messages):
         if isinstance(message, AIMessage) and message.content:
